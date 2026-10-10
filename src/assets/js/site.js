@@ -34,52 +34,75 @@
     });
   }
 
-  const images = document.querySelectorAll("img[data-enlarge]");
-  if (!images.length || typeof HTMLDialogElement === "undefined" || !HTMLDialogElement.prototype.showModal) return;
+  const dialog = document.querySelector("#artwork-lightbox");
+  const gallery = Array.from(document.querySelectorAll(".artwork-grid .artwork-image-link"));
+  if (!dialog || !gallery.length || typeof dialog.showModal !== "function") return;
 
-  const dialog = document.createElement("dialog");
-  dialog.className = "image-dialog";
-  const closeButton = document.createElement("button");
-  closeButton.type = "button";
-  closeButton.className = "dialog-close";
-  closeButton.textContent = "Close";
-  const fullImage = document.createElement("img");
-  fullImage.decoding = "async";
-  dialog.append(closeButton, fullImage);
-  document.body.append(dialog);
+  const fullImage = dialog.querySelector("img");
+  const title = dialog.querySelector("#lightbox-title");
+  const close = dialog.querySelector(".lightbox-close");
+  let current = 0;
+  let opener;
 
-  let activeTrigger;
-  closeButton.addEventListener("click", () => dialog.close());
-  dialog.addEventListener("click", (event) => {
-    const bounds = dialog.getBoundingClientRect();
-    if (event.target === dialog && (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom)) {
-      dialog.close();
+  const showPhoto = (index) => {
+    current = (index + gallery.length) % gallery.length;
+    const link = gallery[current];
+    const thumbnail = link.querySelector("img");
+    fullImage.src = link.getAttribute("href");
+    fullImage.alt = thumbnail.alt;
+    fullImage.width = Number(thumbnail.getAttribute("width"));
+    fullImage.height = Number(thumbnail.getAttribute("height"));
+    title.textContent = link.dataset.artworkTitle;
+  };
+
+  document.querySelectorAll(".artwork-image-link").forEach((link) => {
+    link.setAttribute("aria-haspopup", "dialog");
+    link.addEventListener("click", (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      opener = link;
+      showPhoto(gallery.findIndex((photo) => photo.getAttribute("href") === link.getAttribute("href")));
+      dialog.showModal();
+      document.body.classList.add("lightbox-open");
+      close.focus({ preventScroll: true });
+    });
+  });
+
+  close.addEventListener("click", () => dialog.close());
+  dialog.querySelector(".lightbox-previous").addEventListener("click", () => showPhoto(current - 1));
+  dialog.querySelector(".lightbox-next").addEventListener("click", () => showPhoto(current + 1));
+  dialog.addEventListener("keydown", (event) => {
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+    if (event.key === "Tab") {
+      const controls = Array.from(dialog.querySelectorAll("button"));
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+      event.preventDefault();
+      showPhoto(current + (event.key === "ArrowLeft" ? -1 : 1));
     }
   });
-  dialog.addEventListener("close", () => {
-    document.body.classList.remove("dialog-open");
-    activeTrigger?.focus({ preventScroll: true });
-  });
 
-  images.forEach((image) => {
-    const trigger = document.createElement("button");
-    trigger.type = "button";
-    trigger.className = "enlarge-button";
-    trigger.setAttribute("aria-haspopup", "dialog");
-    const arrow = document.createElement("span");
-    arrow.setAttribute("aria-hidden", "true");
-    arrow.textContent = "↗";
-    trigger.append("View full image ", arrow);
-    image.after(trigger);
-    trigger.addEventListener("click", () => {
-      activeTrigger = trigger;
-      fullImage.src = image.src;
-      fullImage.alt = image.alt;
-      fullImage.width = image.width;
-      fullImage.height = image.height;
-      dialog.setAttribute("aria-label", "Full image: " + document.querySelector("h1").textContent);
-      document.body.classList.add("dialog-open");
-      dialog.showModal();
-    });
+  const outside = (event) => {
+    const bounds = dialog.getBoundingClientRect();
+    return event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom;
+  };
+  let backdropPress = false;
+  dialog.addEventListener("pointerdown", (event) => { backdropPress = outside(event); });
+  dialog.addEventListener("click", (event) => {
+    if (backdropPress && outside(event)) dialog.close();
+    backdropPress = false;
+  });
+  dialog.addEventListener("close", () => {
+    document.body.classList.remove("lightbox-open");
+    opener?.focus({ preventScroll: true });
   });
 })();

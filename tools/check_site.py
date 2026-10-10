@@ -8,7 +8,7 @@ from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1] / "src"
 EXPECTED_PAGES = {
-    "index.html", "bio/index.html", "contact/index.html",
+    "index.html", "bio/index.html", "contact/index.html", "classes-and-shows/index.html",
     "portfolio/mexican-tile-sun-table/index.html",
     "portfolio/dancing-women-table/index.html",
     "portfolio/talavera-tile-night-stand/index.html",
@@ -20,6 +20,9 @@ EXPECTED_PAGES = {
     "portfolio/tree-of-life-table/index.html",
 }
 
+CONTENT_PAGES = {"index.html", "bio/index.html", "contact/index.html", "classes-and-shows/index.html"}
+LEGACY_PAGES = EXPECTED_PAGES - CONTENT_PAGES
+
 
 class Document(HTMLParser):
     def __init__(self, path):
@@ -29,10 +32,15 @@ class Document(HTMLParser):
         self.references = []
         self.images = []
         self.h1_count = 0
+        self.redirect = None
         self.feed(path.read_text())
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
+        if tag == "meta" and attrs.get("http-equiv", "").lower() == "refresh":
+            delay, separator, target = attrs.get("content", "").partition(";")
+            self.redirect = target.strip()[4:] if delay == "0" and separator and target.strip().lower().startswith("url=") else ""
+            self.references.append(self.redirect)
         if "id" in attrs:
             self.ids.append(attrs["id"])
         if tag == "h1":
@@ -53,6 +61,8 @@ def main():
     actual = {str(path.relative_to(ROOT)) for path in ROOT.rglob("*.html")}
     for missing in sorted(EXPECTED_PAGES - actual):
         failures.append(f"Missing approved page: {missing}")
+    for unexpected in sorted(actual - EXPECTED_PAGES):
+        failures.append(f"Unexpected unapproved page: {unexpected}")
     for document in documents.values():
         name = document.path.relative_to(ROOT)
         if document.h1_count != 1:
@@ -62,7 +72,10 @@ def main():
         if len(document.ids) != len(set(document.ids)):
             failures.append(f"{name}: duplicate IDs")
         contacts = {"mailto:bethemeyerson@gmail.com", "tel:+17079723040"}
-        if not contacts.issubset(document.references):
+        if name.as_posix() in LEGACY_PAGES:
+            if document.redirect != "../../index.html#portfolio":
+                failures.append(f"{name}: legacy artwork URL must return to the gallery")
+        elif not contacts.issubset(document.references):
             failures.append(f"{name}: missing working email/phone destinations")
         for image in document.images:
             if not image.get("alt", "").strip():
@@ -93,7 +106,7 @@ def main():
     if failures:
         print("\n".join(f"FAIL: {failure}" for failure in failures))
         raise SystemExit(1)
-    print(f"PASS: {len(documents)} pages; all local links, fragments, images, and contact destinations resolve.")
+    print(f"PASS: {len(documents)} pages; all local links, fragments, images, legacy redirects, and contact destinations resolve.")
 
 
 if __name__ == "__main__":

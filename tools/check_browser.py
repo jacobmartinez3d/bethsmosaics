@@ -18,8 +18,17 @@ from playwright.sync_api import expect, sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1] / "src"
 PAGE_PATHS = [str(path.relative_to(ROOT)) for path in sorted(ROOT.rglob("*.html"))]
-FIRST_PROJECT = "portfolio/mexican-tile-sun-table/index.html"
-WIDE_PROJECT = "portfolio/wooden-birds-wall-hanging/index.html"
+LEGACY_PROJECTS = [
+    "portfolio/mexican-tile-sun-table/index.html",
+    "portfolio/dancing-women-table/index.html",
+    "portfolio/talavera-tile-night-stand/index.html",
+    "portfolio/deer-in-the-trees-wall-hanging/index.html",
+    "portfolio/potted-plant-holder/index.html",
+    "portfolio/wooden-birds-wall-hanging/index.html",
+    "portfolio/mountain-scene-wall-hanging/index.html",
+    "portfolio/black-bear-wall-hanging/index.html",
+    "portfolio/tree-of-life-table/index.html",
+]
 
 
 class PrefixHandler(SimpleHTTPRequestHandler):
@@ -63,6 +72,8 @@ class SiteBrowserTests(unittest.TestCase):
     def goto(self, path="index.html"):
         response = self.page.goto(self.base + path)
         self.assertEqual(response.status, 200)
+        if path in LEGACY_PROJECTS:
+            expect(self.page).to_have_url(self.base + "index.html#portfolio")
         self.page.evaluate("document.fonts.ready")
 
     def test_mobile_menu_escape_and_resize(self):
@@ -91,30 +102,112 @@ class SiteBrowserTests(unittest.TestCase):
         navigation.get_by_role("link", name="Bio", exact=True).click()
         self.assertTrue(self.page.url.endswith("/bio/index.html"))
 
-    def test_artwork_dialog_keyboard_and_backdrop(self):
-        # Catches a dead enlargement control, wrong image, missing close
-        # behavior, missing focus restoration, and retained scroll locking.
-        self.goto(FIRST_PROJECT)
-        trigger = self.page.get_by_role("button", name="View full image", exact=True)
-        self.assertEqual(trigger.count(), 1, "An artwork needs a functioning image enlargement control")
-        trigger.click()
+    def test_lightbox_open_navigation_close_and_focus(self):
+        # Catches dead gallery triggers, wrong full-size images/order, broken
+        # dismissal, and focus escaping or failing to return to the opener.
+        self.goto()
+        trigger = self.page.get_by_role("link", name="View full image: Mexican Tile Sun Table", exact=True).last
+        self.assertEqual(trigger.count(), 1, "Artwork needs an enlargement link")
+        trigger.focus()
+        self.page.keyboard.press("Enter")
         dialog = self.page.get_by_role("dialog")
-        self.assertTrue(dialog.is_visible())
-        self.assertEqual(dialog.locator("img").get_attribute("alt"), self.page.locator(".project-image").get_attribute("alt"))
-        self.assertTrue(dialog.locator("img").get_attribute("src").endswith("mexican-tile-sun-table.webp"))
-        expect(dialog.get_by_role("button", name="Close", exact=True)).to_be_focused()
+        expect(dialog).to_be_visible()
+        close = dialog.get_by_role("button", name="Close", exact=True)
+        expect(close).to_be_focused()
+        expect(dialog).to_have_accessible_name("Mexican Tile Sun Table")
+        expect(dialog.locator("img")).to_have_attribute("src", "assets/images/mexican-tile-sun-table.webp")
+        self.page.keyboard.press("Shift+Tab")
+        expect(dialog.get_by_role("button", name="Next photo", exact=True)).to_be_focused()
+        self.page.keyboard.press("Tab")
+        expect(close).to_be_focused()
+        self.page.keyboard.press("ArrowRight")
+        expect(dialog).to_have_accessible_name("Dancing Women Table")
+        expect(dialog.locator("img")).to_have_attribute("src", "assets/images/dancing-women-table.webp")
+        self.page.keyboard.press("ArrowLeft")
+        dialog.get_by_role("button", name="Previous photo", exact=True).click()
+        expect(dialog).to_have_accessible_name("Tree of Life Table")
+        dialog.get_by_role("button", name="Next photo", exact=True).click()
+        expect(dialog).to_have_accessible_name("Mexican Tile Sun Table")
         self.page.keyboard.press("Escape")
-        self.assertFalse(dialog.is_visible())
-        self.assertTrue(trigger.evaluate("el => document.activeElement === el"))
-        self.assertFalse(self.page.locator("body").evaluate("el => el.classList.contains('dialog-open')"))
+        expect(dialog).not_to_be_visible()
+        expect(trigger).to_be_focused()
+        self.assertFalse(self.page.locator("body").evaluate("el => el.classList.contains('lightbox-open')"))
         trigger.click()
-        dialog.get_by_role("button", name="Close", exact=True).click()
-        self.assertFalse(dialog.is_visible())
-        self.assertTrue(trigger.evaluate("el => document.activeElement === el"))
+        close.click()
+        expect(dialog).not_to_be_visible()
+        expect(trigger).to_be_focused()
         trigger.click()
         self.page.mouse.click(2, 2)
-        self.assertFalse(dialog.is_visible())
-        self.assertTrue(trigger.evaluate("el => document.activeElement === el"))
+        expect(dialog).not_to_be_visible()
+        expect(trigger).to_be_focused()
+        self.assertEqual(self.page.url, self.base + "index.html")
+        self.assertEqual(self.page.locator("#process img").count(), 4)
+        self.assertEqual(self.page.locator(".process-steps li").count(), 3)
+
+    def test_lightbox_all_artwork_and_viewport_fit(self):
+        # Catches a missed featured/gallery trigger, cropped images, and
+        # viewer controls or photos outside narrow/mobile/desktop screens.
+        for width, height in [(320, 640), (390, 844), (844, 390), (1440, 960)]:
+            self.page.set_viewport_size({"width": width, "height": height})
+            self.goto()
+            triggers = self.page.locator(".hero-art a, .artwork-grid a")
+            self.assertEqual(triggers.count(), 10, "Featured artwork and all nine gallery images must enlarge")
+            for trigger in triggers.all():
+                trigger.click()
+                dialog = self.page.get_by_role("dialog")
+                expect(dialog).to_be_visible()
+                img = dialog.locator("img")
+                img.evaluate("el => el.decode()")
+                self.assertEqual(img.get_attribute("src"), trigger.get_attribute("href"))
+                self.assertEqual(img.get_attribute("alt"), trigger.locator("img").get_attribute("alt"))
+                self.assertEqual(img.evaluate("el => getComputedStyle(el).objectFit"), "contain")
+                for element in [img, *dialog.get_by_role("button").all()]:
+                    box = element.bounding_box()
+                    self.assertTrue(box and box["x"] >= 0 and box["y"] >= 0 and box["x"] + box["width"] <= width + 1 and box["y"] + box["height"] <= height + 1)
+                img.click()
+                expect(dialog).to_be_visible()
+                dialog.get_by_role("button", name="Close", exact=True).click()
+
+    def test_full_image_fallback_without_javascript_or_dialog_support(self):
+        # Catches broken fallback image links when the lightbox enhancement
+        # cannot run. Both environments must still show the actual artwork.
+        for disabled in (True, False):
+            context = self.browser.new_context(java_script_enabled=not disabled)
+            try:
+                if not disabled:
+                    context.add_init_script("HTMLDialogElement.prototype.showModal = undefined")
+                page = context.new_page()
+                page.goto(self.base + "index.html")
+                trigger = page.get_by_role("link", name="View full image: Wooden Birds Wall Hanging", exact=True)
+                self.assertEqual(trigger.count(), 1, "Artwork needs a working full-image fallback")
+                trigger.click()
+                expect(page).to_have_url(self.base + "assets/images/wooden-birds-wall-hanging.webp")
+                self.assertTrue(page.locator("img").evaluate("el => el.complete && el.naturalWidth > 0"))
+            finally:
+                context.close()
+
+    def test_old_artwork_urls_return_to_gallery(self):
+        # Catches missed legacy pages, broken relative redirects, and exposed
+        # artwork metadata when following bookmarks under repository hosting.
+        for path in LEGACY_PROJECTS:
+            with self.subTest(page=path):
+                self.goto(path)
+                self.assertEqual(self.page.locator(".project-meta, .project-navigation").count(), 0)
+                self.assertEqual(self.page.locator(".artwork-grid img").count(), 9)
+
+    def test_classes_and_shows_navigation_and_contact(self):
+        # Catches a missing events destination in the mobile navigation or
+        # a stranded visitor trying to ask Beth for event information.
+        self.goto()
+        self.page.get_by_role("button", name="Menu", exact=True).click()
+        events_link = self.page.get_by_role("navigation", name="Main navigation").get_by_role("link", name="Classes & Shows", exact=True)
+        self.assertEqual(events_link.count(), 1, "Classes & Shows needs a navigation destination")
+        events_link.click()
+        expect(self.page).to_have_url(self.base + "classes-and-shows/index.html")
+        expect(self.page.get_by_role("heading", level=1)).to_have_text("Classes & Shows")
+        self.page.locator("main").get_by_role("link", name="Contact Me").click()
+        expect(self.page).to_have_url(self.base + "contact/index.html")
+        self.assertEqual(self.page.get_by_role("link", name="Email Beth").get_attribute("href"), "mailto:bethemeyerson@gmail.com")
 
     def test_all_pages_load_without_overflow_or_broken_assets(self):
         # Catches bad nested asset paths, narrow-screen overflow, failed lazy
@@ -142,12 +235,16 @@ class SiteBrowserTests(unittest.TestCase):
         context = self.browser.new_context(java_script_enabled=False, viewport={"width": 320, "height": 800})
         try:
             page = context.new_page()
-            for path in ("index.html", "bio/index.html", "contact/index.html", FIRST_PROJECT):
+            for path in ("index.html", "bio/index.html", "classes-and-shows/index.html", "contact/index.html", *LEGACY_PROJECTS):
                 response = page.goto(self.base + path)
                 self.assertEqual(response.status, 200)
+                if path in LEGACY_PROJECTS:
+                    expect(page).to_have_url(self.base + "index.html#portfolio")
+                self.assertTrue(page.evaluate("document.documentElement.scrollWidth <= window.innerWidth"))
                 navigation = page.get_by_role("navigation", name="Main navigation")
                 self.assertTrue(navigation.is_visible())
                 self.assertTrue(navigation.get_by_role("link", name="Contact", exact=True).is_visible())
+                self.assertTrue(navigation.get_by_role("link", name="Classes & Shows", exact=True).is_visible())
                 self.assertEqual(page.get_by_role("button", name="View full image", exact=True).count(), 0)
                 self.assertEqual(page.locator('a[href="mailto:bethemeyerson@gmail.com"]').count() > 0, True)
             page.goto(self.base + "index.html")
@@ -156,21 +253,11 @@ class SiteBrowserTests(unittest.TestCase):
         finally:
             context.close()
 
-    def test_project_order_whole_image_and_skip_link(self):
-        # Catches bad project order and inaccessible main-content shortcuts.
-        self.goto(FIRST_PROJECT)
-        self.assertEqual(self.page.locator(".previous-project").count(), 0)
-        self.page.locator(".next-project").click()
-        self.assertTrue(self.page.url.endswith("/dancing-women-table/index.html"))
-        self.page.locator(".previous-project").click()
-        self.assertTrue(self.page.url.endswith("/mexican-tile-sun-table/index.html"))
-        self.goto("portfolio/tree-of-life-table/index.html")
-        self.assertEqual(self.page.locator(".next-project").count(), 0)
-        self.page.locator(".back-link").click()
-        self.assertTrue(self.page.url.endswith("/index.html#portfolio"))
-        self.goto(WIDE_PROJECT)
-        self.assertEqual(self.page.locator(".project-image").evaluate("el => getComputedStyle(el).objectFit"), "contain")
+    def test_gallery_whole_image_and_skip_link(self):
+        # Catches cropped artwork now that there is no separate detail view,
+        # and inaccessible main-content shortcuts.
         self.goto()
+        self.assertEqual(self.page.locator(".artwork-grid img").last.evaluate("el => getComputedStyle(el).objectFit"), "contain")
         self.page.keyboard.press("Tab")
         self.assertEqual(self.page.locator(":focus").inner_text(), "Skip to content")
         self.page.keyboard.press("Enter")
