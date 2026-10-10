@@ -52,10 +52,18 @@ Material revisions after release approval require renewed approval. Technical fi
 - [ ] Configure branch rules for `main` to require pull requests and the `Check site` status check where available. Agents must still obtain chat approval before merging.
 - [x] Approve the temporary homepage copy and implement the holding page.
 - [ ] Approve the full portfolio specification and implement it.
-- [ ] Approve the first release, merge, and verify the live site.
+- [x] Approve the first release, merge PR #1, and verify the live site.
 
 ## Current boundaries
 
 The GitHub repository is `jacobmartinez3d/bethsmosaics`. The full portfolio content, design, and custom domain have not been decided. The temporary homepage is implemented from approved copy. The deployment workflow publishes `src/` when an approved release reaches `main`.
 
-Jacob initialized Git, configured `origin`, and renamed the initial branch to `main`. Git writes previously failed inside the sandbox; updated permissions now allow approved Git operations through sandbox escalation. SSH access to GitHub works, and the initial scaffold is pushed. GitHub API credentials are unavailable, so repository settings must be configured by Jacob. The first homepage release and live-site verification are pending.
+Jacob initialized Git, configured `origin`, and renamed the initial branch to `main`. Git writes previously failed inside the sandbox; updated permissions now allow approved Git operations through sandbox escalation. SSH access to GitHub works. GitHub API credentials are unavailable, so repository settings and pull requests are managed by Jacob for now.
+
+## Verified hosting release
+
+- Jacob merged PR #1 into `main`, producing commit `399eeac`.
+- GitHub Pages deployment succeeded: https://github.com/jacobmartinez3d/bethsmosaics/actions/runs/38079110513.
+- Live website: https://jacobmartinez3d.github.io/bethsmosaics/.
+- Verified on 2026-10-10: homepage HTTP 200 with “Beth’s Mosaics — Coming soon.”; stylesheet HTTP 200; `/docs/plan.md` HTTP 404.
+- Hosting is working. Full portfolio development can begin with specification review.
