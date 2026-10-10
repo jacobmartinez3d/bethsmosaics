@@ -51,12 +51,14 @@ Material revisions after release approval require renewed approval. Technical fi
 - [ ] Restrict the `github-pages` environment to `main`.
 - [ ] Configure branch rules for `main` to require pull requests and the `Check site` status check where available. Agents must still obtain chat approval before merging.
 - [x] Approve the temporary homepage copy and implement the holding page.
-- [ ] Approve the full portfolio specification and implement it.
+- [x] Approve the first-pass portfolio scope and design.
+- [x] Implement the first-pass portfolio and validate it locally.
+- [ ] Obtain Jacob’s implementation review and release approval for the first-pass portfolio.
 - [x] Approve the first release, merge PR #1, and verify the live site.
 
 ## Current boundaries
 
-The GitHub repository is `jacobmartinez3d/bethsmosaics`. The full portfolio content, design, and custom domain have not been decided. The temporary homepage is implemented from approved copy. The deployment workflow publishes `src/` when an approved release reaches `main`.
+The GitHub repository is `jacobmartinez3d/bethsmosaics`. The first-pass portfolio scope and design are approved and being implemented on a feature branch for local review. The temporary homepage remains the live release until the portfolio implementation receives release approval. The custom domain has not been decided. The deployment workflow publishes `src/` when an approved release reaches `main`.
 
 Jacob initialized Git, configured `origin`, and renamed the initial branch to `main`. Git writes previously failed inside the sandbox; updated permissions now allow approved Git operations through sandbox escalation. SSH access to GitHub works. GitHub API credentials are unavailable, so repository settings and pull requests are managed by Jacob for now.
 
@@ -67,3 +69,31 @@ Jacob initialized Git, configured `origin`, and renamed the initial branch to `m
 - Live website: https://jacobmartinez3d.github.io/bethsmosaics/.
 - Verified on 2026-10-10: homepage HTTP 200 with “Beth’s Mosaics — Coming soon.”; stylesheet HTTP 200; `/docs/plan.md` HTTP 404.
 - Hosting is working. Full portfolio development can begin with specification review.
+
+## First-pass portfolio approval — 2026-10-10
+
+Jacob supplied `https://www.bethsmosaics.com/` as the reference and requested contemporary implementation using the agent's design judgment. Jacob then explicitly approved the in-chat first-pass specification.
+
+- Preserve Portfolio, Bio, and Contact pages, nine artwork detail pages, and the homepage's three-step mosaic process.
+- Use a warm contemporary gallery: ivory, charcoal, terracotta, large serif headings, spacious artwork photography, and responsive navigation.
+- Reuse existing titles, metadata, biography, photographs, and contact details from Wix. Correct the placeholder footer email and copyright year; remove Wix setup text.
+- Replace the Wix form with email and phone links for the first pass.
+- Add keyboard-accessible image enlargement and previous/next project links.
+- Keep the existing buildless `src/` and GitHub Pages publishing setup.
+- Implement on `feat/portfolio-first-pass`; approval covers specification updates and implementation. Release still requires review of the rendered result and separate explicit approval.
+- Implementation follows the repository workflow: approved specification → implementation → local review → release approval. The feature branch is in the existing checkout.
+
+Implementation steps and validation are recorded in [the first-pass plan](superpowers/plans/2026-10-10-portfolio-first-pass.md).
+
+## First-pass implementation review evidence
+
+- Implemented twelve static pages on `feat/portfolio-first-pass`: homepage, Bio, Contact, and nine artwork pages.
+- Reused all nine artwork photographs, the portrait, and four process photographs from Wix. Created optimized responsive WebP assets and local licensed fonts.
+- `python3 tools/check_site.py` passed for all twelve pages, local links, fragments, images, and contact destinations. The same check now runs in the pull-request workflow.
+- Six real Chrome browser tests passed, including all twelve pages at 320, 768, and 1440 pixels; mobile navigation and viewport changes; image-dialog Escape/backdrop/button closing and focus restoration; previous/next navigation; reduced motion; JavaScript-disabled browsing; lazy images; and the `/bethsmosaics/` subpath.
+- Independent code review found no Critical or Important issues. Corrected its two minor findings: artwork pages announce Portfolio as the current section rather than current page, and AGENTS.md reflects the approved specification.
+- Desktop and mobile screenshots reviewed for homepage, Bio, Contact, and a wide artwork detail page; artifacts are under `/tmp/beth-first-pass/` in this workspace.
+- The retained Mountain Artists link returned HTTP 200.
+- Local preview serves only `src/` at `http://localhost:8000` and has been opened in the browser.
+- GitHub API credentials remain unavailable. Push the feature branch and provide its pull-request creation link for Jacob; no pull request has been created yet.
+- First-pass production release remains pending explicit approval of the implementation. The live site still serves the previously approved holding page.

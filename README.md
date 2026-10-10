@@ -15,7 +15,7 @@ AGENTS.md               Instructions for agents
 .github/workflows/      GitHub Actions checks and publishing
 ```
 
-The temporary homepage says “Beth’s Mosaics — Coming soon.” The full portfolio content and design remain to be planned. Empty asset folders contain `.gitkeep` files solely to preserve their structure in Git; remove those placeholders as real assets are added.
+The first-pass portfolio includes Portfolio, Bio, and Contact pages, nine artwork pages, and Beth’s mosaic process. It reuses photographs and content from the original Wix site. The site uses plain HTML, CSS, JavaScript, local fonts, and optimized local images; no installation or build step is needed to preview or publish it.
 
 ## Development
 
@@ -30,6 +30,26 @@ python3 -m http.server 8000 --directory src
 ```
 
 Open `http://localhost:8000`. Stop the server with Ctrl+C.
+
+Run the standard-library validation:
+
+```sh
+python3 tools/check_site.py
+```
+
+It checks all twelve pages, local links and fragments, contact destinations, image references and alternative text, and the publishable directory boundary. GitHub pull requests run this check too.
+
+Optional real-browser checks require Chrome and the Python `playwright` package. These are development tools; they are never part of the published site:
+
+```sh
+python3 -m venv /tmp/beth-site-qa
+/tmp/beth-site-qa/bin/pip install playwright
+/tmp/beth-site-qa/bin/python tools/check_browser.py
+```
+
+The browser suite serves only `src/` on a temporary local port under `/bethsmosaics/`, testing repository-subpath hosting, widths from 320 to 1440 pixels, mobile navigation, image dialogs and keyboard focus, reduced motion, image loading, and JavaScript-disabled browsing. Set `BETH_CHROME` to a Chrome executable path when it is not on `PATH`.
+
+The source pages are ready-to-publish files. To edit content, update the approved specification and the corresponding HTML together. Shared presentation and behavior live in `src/assets/css/site.css` and `src/assets/js/site.js`. Font licenses are included in `src/assets/fonts/`; photograph provenance is recorded in `docs/website.md`.
 
 ## GitHub setup
 
@@ -50,7 +70,7 @@ Agents need explicit chat approval to merge a reviewed implementation. GitHub do
 
 Pull requests run `Check site` without publishing. Pushes to `main` affecting `src/` or the Pages workflow run checks and publish only `src/`. Manual workflow runs are limited to publishing from `main` and require release approval too. There is no build step or additional hosting service.
 
-Until `src/index.html` exists, the check reports that the site awaits implementation and skips deployment. Once it exists, the workflow requires a nonempty homepage before uploading it. This readiness check does not replace content, link, interaction, or visual review.
+Until `src/index.html` exists, the check reports that the site awaits implementation and skips deployment. Once it exists, the workflow requires a nonempty homepage and runs the static site validator before uploading it. Automated checks supplement content, interaction, and visual review.
 
 After deployment, check the Actions result and open the published URL to verify the site. Hosted pull-request previews are not part of the initial setup.
 
