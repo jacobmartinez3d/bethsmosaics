@@ -56,9 +56,9 @@
 - [x] Inspect desktop/mobile screenshots and compare implementation against `docs/website.md`.
 - [x] Perform independent whole-change code review and resolve material findings.
 - [x] Run `python3 tools/check_site.py`, browser QA, and `git diff --check`; record results.
-- [ ] Verify local Git identity; commit this coherent first-pass change using Conventional Commits. Verify recorded author and committer.
-- [ ] Push the feature branch and create a reviewable pull request if available; otherwise provide the exact branch and pull-request creation URL.
-- [ ] Keep the local preview available and hand it over for implementation review. Do not merge or publish before explicit release approval.
+- [x] Verify local Git identity; commit this coherent first-pass change using Conventional Commits. Verify recorded author and committer.
+- [x] Push the feature branch and create a reviewable pull request if available; otherwise provide the exact branch and pull-request creation URL.
+- [x] Keep the local preview available and hand it over for implementation review. Do not merge or publish before explicit release approval.
 
 ## Execution record
 
@@ -72,3 +72,5 @@
 - Ruling: viewport media-query events are asynchronous, so the test waits for the observable navigation state. A native modal dialog permits Tab focus to the browser chrome; the test verifies the Close control starts focused and focus returns to the trigger on closing, without overriding native keyboard behavior.
 - Final review: independent reviewer found no material defects; corrected minor current-section semantics and the stale instruction. Static validation, all six browser tests, and whitespace checks passed after corrections.
 - Review limits: email and telephone delivery, additional browser engines/screen-reader combinations, and production deployment are not exercised. These do not prevent the requested local review.
+
+- Delivery: implementation committed as `2ccc617` with verified Jacob Martinez author/committer identity; feature branch pushed. Pull-request creation URL and description prepared because GitHub API credentials are unavailable. Local preview remains available for Jacob’s review.

@@ -95,5 +95,5 @@ Implementation steps and validation are recorded in [the first-pass plan](superp
 - Desktop and mobile screenshots reviewed for homepage, Bio, Contact, and a wide artwork detail page; artifacts are under `/tmp/beth-first-pass/` in this workspace.
 - The retained Mountain Artists link returned HTTP 200.
 - Local preview serves only `src/` at `http://localhost:8000` and has been opened in the browser.
-- GitHub API credentials remain unavailable. Push the feature branch and provide its pull-request creation link for Jacob; no pull request has been created yet.
+- The reviewed implementation is committed as `2ccc617` with Jacob Martinez’s required author and committer identity. `feat/portfolio-first-pass` is pushed to GitHub. GitHub API credentials remain unavailable, so a pull request has not been created; its prepared creation link is https://github.com/jacobmartinez3d/bethsmosaics/pull/new/feat/portfolio-first-pass.
 - First-pass production release remains pending explicit approval of the implementation. The live site still serves the previously approved holding page.
