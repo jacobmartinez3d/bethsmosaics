@@ -15,7 +15,7 @@ AGENTS.md               Instructions for agents
 .github/workflows/      GitHub Actions checks and publishing
 ```
 
-The homepage and site content have not been approved or implemented. Empty asset folders contain `.gitkeep` files solely to preserve their structure in Git; remove those placeholders as real assets are added.
+The temporary homepage says “Beth’s Mosaics — Coming soon.” The full portfolio content and design remain to be planned. Empty asset folders contain `.gitkeep` files solely to preserve their structure in Git; remove those placeholders as real assets are added.
 
 ## Development
 
@@ -23,13 +23,13 @@ Start with [the website specification](docs/website.md) and follow [the approved
 
 Use atomic, Conventional Commits: one coherent change per commit, with messages such as `feat(gallery): add approved mosaic gallery`, `fix(navigation): correct portfolio link`, or `docs: update website specification`. Include related specification and documentation updates with their implementation. The initial scaffold uses `chore: initialize website development scaffold`.
 
-Once a homepage exists, preview locally:
+Preview locally:
 
 ```sh
 python3 -m http.server 8000 --directory src
 ```
 
-Open `http://localhost:8000`. Stop the server with Ctrl+C. Until `src/index.html` exists, this shows a directory listing rather than a website.
+Open `http://localhost:8000`. Stop the server with Ctrl+C.
 
 ## GitHub setup
 
