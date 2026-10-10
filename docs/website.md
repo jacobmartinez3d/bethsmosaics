@@ -10,7 +10,7 @@ A personal portfolio for Beth Meyerson Sterkel, a mosaic and ceramic artist in W
 
 ## Approved visual direction
 
-A warm, contemporary gallery with ivory backgrounds, charcoal text, restrained terracotta accents, large serif headings, clean sans-serif body text, and generous spacing. Photographs of Beth's actual work lead the composition. The homepage introduction features the Mexican Tile Sun Table photograph. Responsive galleries use three columns on large screens, two on medium screens, and one on narrow screens. Gallery and featured photographs preserve each complete artwork rather than cropping it. Artwork is a non-interactive display, with no hover zoom or click-through arrows. Other subtle hover effects respect reduced-motion preferences.
+A warm, contemporary gallery with ivory backgrounds, charcoal text, restrained terracotta accents, large serif headings, clean sans-serif body text, and generous spacing. Photographs of Beth's actual work lead the composition. The homepage introduction features the Mexican Tile Sun Table photograph. Responsive galleries use three columns on large screens, two on medium screens, and one on narrow screens. Gallery and featured photographs preserve each complete artwork rather than cropping it. Artwork photographs have a subtle enlargement icon and open an image-only lightbox; there are no links to individual piece pages. Other subtle hover effects respect reduced-motion preferences.
 
 ## Shared structure and behavior
 
@@ -19,8 +19,10 @@ A warm, contemporary gallery with ivory backgrounds, charcoal text, restrained t
 - Mobile: an accessible Menu button opens navigation. Escape closes it and restores focus. Navigation remains usable when JavaScript is disabled.
 - Include a skip link to the main content and visible keyboard focus styles.
 - Footer: Contact Me, `bethemeyerson@gmail.com` linked to `mailto:bethemeyerson@gmail.com`, `707-972-3040` linked to `tel:+17079723040`, Woodland Park, Colorado, page links, and “© 2026 Beth’s Mosaics.”
-- Artwork photographs and captions do not open detail pages or enlargement dialogs.
-- All page content and navigation work without JavaScript; only menu enhancement needs JavaScript.
+- Selecting any of the nine gallery photographs or the featured artwork opens its full-resolution local photograph in a responsive lightbox over a dark backdrop. Use a native modal dialog with the artwork title, visible Close button, and Previous photo / Next photo controls. Only the photograph and title are shown; no location, project metadata, or sales information.
+- Previous/next controls and Left/Right arrow keys cycle through the nine photographs in gallery order, wrapping at the ends. The featured artwork opens the same first photograph. Escape, Close, and a backdrop click dismiss the lightbox. Tab/Shift+Tab stay inside it; closing restores focus to the original image link and releases background scroll locking. Controls remain usable on narrow and landscape screens, and the full photograph fits without cropping.
+- Artwork image links point directly to the larger local photograph. Without JavaScript or native modal support they open that image normally. Respect modified clicks so visitors can open the image in a new tab. Captions do not link to detail pages.
+- All page content and navigation work without JavaScript; menu enhancement and the lightbox need JavaScript.
 - All internal links, CSS, scripts, and images use relative URLs and work under the GitHub Pages `/bethsmosaics/` subpath.
 - Publishable HTML, CSS, JavaScript, images, and fonts live only in `src/`. Pages require no build step or server-side service.
 - Use optimized local WebP versions of the approved Wix photographs with responsive sizes where useful, meaningful alternative text, intrinsic dimensions, and lazy loading below the first screen. Use local fonts with system fallbacks.
@@ -32,8 +34,8 @@ A warm, contemporary gallery with ivory backgrounds, charcoal text, restrained t
 - **Page title:** Beth’s Mosaics | Portfolio.
 - **Description:** Mosaic and ceramic art by Beth Meyerson Sterkel in Woodland Park, Colorado. Explore colorful tables, wall hangings, and repurposed creations.
 - **Sections, in order:**
-  1. `portfolio-introduction`: artist name; heading “My Portfolio”; exact introduction “Welcome to my portfolio. Here you’ll find a selection of my work.”; non-interactive Mexican Tile Sun Table feature photograph and its existing title/type caption; an “Explore the work” link to `#portfolio` and a “Meet the artist” link to the Bio page.
-  2. `portfolio`: nine non-interactive artwork images with their titles and existing project types, in the order in the table below. A visible “Mosaics” heading introduces the work.
+  1. `portfolio-introduction`: artist name; heading “My Portfolio”; exact introduction “Welcome to my portfolio. Here you’ll find a selection of my work.”; enlargeable Mexican Tile Sun Table feature photograph and its existing title/type caption; an “Explore the work” link to `#portfolio` and a “Meet the artist” link to the Bio page.
+  2. `portfolio`: nine enlargeable artwork images with their titles and existing project types, in the order in the table below. A visible “Mosaics” heading introduces the work.
   3. `process`: heading “My Process”; exact paragraph “Mosaics are intricate works that bring color and personality to spaces. My creations are made with found and re-purposed materials, giving new life to previously loved items. My art is inspired by the beauty of Colorado, the Southwest, and Mexico.”; the existing materials photograph; three ordered photographic steps: “Step 1:” / “Finding furniture , frames, and tiles to re-purpose.”; “Step 2:” / “Preparing a design. Cutting and gluing tiles.”; “Step 3:” / “Grouting”. Use the associated process photographs below.
   4. Shared footer.
 
@@ -111,13 +113,13 @@ Fetched from the public Wix site supplied by Jacob, `https://www.bethsmosaics.co
 
 ## UI labels
 
-Routine controls use the labels specified above plus “Menu”. Legacy redirect fallback links are labeled “Portfolio”. Gallery captions use the exact artwork title. Decorative icons have no additional accessible name.
+Routine controls use the labels specified above plus “Menu”, “Close”, “Previous photo”, and “Next photo”. Image links have accessible names “View full image: <artwork title>”. Legacy redirect fallback links are labeled “Portfolio”. Gallery captions use the exact artwork title. Decorative icons have no additional accessible name.
 
 ## Implementation checks
 
 - Compare the four content pages and nine legacy redirects, section order, exact copy, gallery captions, and images with this specification.
 - Validate every local destination, asset, fragment, and image alternative text.
-- Exercise mobile navigation, Escape, focus restoration, Classes & Shows contact navigation, non-interactive artwork display, and all nine legacy redirects in a real browser. Verify that no artwork whereabouts remain public.
+- Exercise mobile navigation, Escape, focus restoration, Classes & Shows contact navigation, and all nine legacy redirects in a real browser. Check lightbox image selection/order, dismissal, keyboard focus, viewport fit, and direct-image fallback. Verify that no artwork whereabouts remain public.
 - Check desktop and mobile layouts, 320-pixel screens, image loading, reduced motion, and JavaScript-disabled browsing.
 - Check nested page URLs under the `/bethsmosaics/` subpath.
 - Provide a local preview and representative screenshots before requesting release approval.

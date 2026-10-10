@@ -121,3 +121,22 @@ Jacob explicitly approved the revised scope after relaying Beth’s feedback.
 - Independent read-only code review found no issues. Additional Chrome header checks at 761, 800, 1000, 1001, 1024, 1100, and 1280 pixels found no navigation overlap or overflow. Event listings/booking are deferred until Beth supplies content; existing process image presentation is retained; deployment settings are outside this change.
 - Eight desktop/mobile screenshots of all four content pages are saved under `/tmp/beth-artist-update/` and visually reviewed. The local preview serves only `src/` at `http://localhost:8000`; documentation returns HTTP 404. The preview was opened in the browser.
 - GitHub CLI and an authenticated GitHub API tool are unavailable in this session; the branch can be pushed over SSH and a prepared pull-request creation link supplied. Release remains pending explicit approval of the rendered implementation; no production publishing was requested or triggered.
+
+## Gallery lightbox correction approval — 2026-10-10
+
+Jacob reviewed the artist-focused update and requested image enlargement using a common contemporary portfolio interaction. He explicitly approved the in-chat lightbox proposal. This supersedes the earlier non-interactive artwork/enlargement-removal decision; individual detail pages and artwork whereabouts remain removed.
+
+- Enlarge the featured artwork and all nine gallery photographs through a dark, responsive native modal lightbox. Show the full-resolution photograph and artwork title.
+- Include visible Close, Previous photo, and Next photo controls, arrow-key navigation, Escape/backdrop dismissal, contained keyboard focus, and focus restoration to the selected image. Photo navigation wraps through gallery order.
+- Direct local image links preserve enlargement without JavaScript or native dialog support. Keep ordinary modified-click/new-tab behavior.
+- Keep the existing feature branch and include this approved specification correction with its implementation in an atomic commit. Review the updated local preview before release; this approval authorizes implementation, not production publishing.
+
+## Gallery lightbox implementation review evidence
+
+- Featured artwork and all nine gallery photographs now have full-image links and native-dialog enhancement. The lightbox shows the photograph/title, wrapped Previous photo / Next photo controls, and a visible Close button. No piece-detail content or artwork locations were restored.
+- Added explicit Tab/Shift+Tab wrapping after a real Chrome check showed backward Tab could move into browser chrome despite the native modal. The focused regression test and complete suite pass after correction. Escape, Close, and backdrop clicks restore opener focus and release scroll locking.
+- `python3 tools/check_site.py` and `git diff --check` pass. All ten real Chrome browser tests pass under `/bethsmosaics/`, including every enlargement trigger at 320×640, 390×844, 844×390, and 1440×960; image identity/alternative text; focus boundaries; photo navigation; dismissal; JavaScript-disabled and unavailable-dialog image fallback; prior navigation/layout checks; and nine legacy redirects.
+- Additional preview checks confirm Ctrl-click opens the original photograph in a new tab and Escape closes the viewer while preserving an expanded mobile menu. My Process markup remains byte-for-byte unchanged.
+- Four lightbox screenshots are saved and visually reviewed under `/tmp/beth-lightbox-review/`: desktop, mobile, narrow, and landscape. The updated `src/` preview at `http://localhost:8000` was opened in the browser.
+- Independent read-only review found no issues; its focused keyboard and fallback tests passed. Swipe gestures and advanced loading UI were not part of the approved controls; reviewed local image links load correctly. Older `dvh` browsers and exhaustive screen-reader/browser combinations were not tested. These do not block this reviewed implementation.
+- This correction updates the existing feature branch for pull-request review. The revised implementation still needs explicit release approval; no merge or production publishing occurred.

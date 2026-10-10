@@ -15,7 +15,7 @@ AGENTS.md               Instructions for agents
 .github/workflows/      GitHub Actions checks and publishing
 ```
 
-The portfolio includes Portfolio, Bio, Classes & Shows, and Contact pages, plus Beth’s mosaic process. Artwork is displayed in the gallery without individual detail pages or location information; the nine former artwork URLs redirect to the gallery. It reuses photographs and content from the original Wix site. The site uses plain HTML, CSS, JavaScript, local fonts, and optimized local images; no installation or build step is needed to preview or publish it.
+The portfolio includes Portfolio, Bio, Classes & Shows, and Contact pages, plus Beth’s mosaic process. Artwork photographs open a responsive lightbox with full-size images, photo navigation, and accessible keyboard controls. There are no individual detail pages or artwork locations; the nine former artwork URLs redirect to the gallery. It reuses photographs and content from the original Wix site. The site uses plain HTML, CSS, JavaScript, local fonts, and optimized local images; no installation or build step is needed to preview or publish it.
 
 ## Development
 
@@ -47,7 +47,7 @@ python3 -m venv /tmp/beth-site-qa
 /tmp/beth-site-qa/bin/python tools/check_browser.py
 ```
 
-The browser suite serves only `src/` on a temporary local port under `/bethsmosaics/`, testing repository-subpath hosting, widths from 320 to 1440 pixels, mobile navigation, non-interactive artwork display, legacy redirects, Classes & Shows contact navigation, keyboard focus, reduced motion, image loading, and JavaScript-disabled browsing. Set `BETH_CHROME` to a Chrome executable path when it is not on `PATH`.
+The browser suite serves only `src/` on a temporary local port under `/bethsmosaics/`, testing repository-subpath hosting, widths from 320 to 1440 pixels, mobile navigation, lightbox navigation/dismissal, viewport fit and keyboard focus, direct-image fallback, legacy redirects, Classes & Shows contact navigation, reduced motion, image loading, and JavaScript-disabled browsing. Set `BETH_CHROME` to a Chrome executable path when it is not on `PATH`.
 
 The source pages are ready-to-publish files. To edit content, update the approved specification and the corresponding HTML together. Shared presentation and behavior live in `src/assets/css/site.css` and `src/assets/js/site.js`. For class/show announcements, supply Beth’s event title, date/time, venue, description, and optional information link through chat. No events are invented; the Classes & Shows page directs visitors to contact Beth until details are supplied. Font licenses are included in `src/assets/fonts/`; photograph provenance is recorded in `docs/website.md`.
 

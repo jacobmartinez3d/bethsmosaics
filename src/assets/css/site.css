@@ -84,6 +84,24 @@ p { line-height: 1.75; }
 .artwork-card { min-width: 0; }
 .card-image { position: relative; overflow: hidden; background: #e8e1d7; }
 .card-image img { width: 100%; aspect-ratio: 1; object-fit: contain; }
+.artwork-image-link { display: block; position: relative; cursor: zoom-in; }
+.image-zoom { position: absolute; bottom: 14px; right: 14px; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: rgb(247 244 238 / .93); color: var(--ink); box-shadow: 0 2px 8px rgb(0 0 0 / .1); transition: background .2s; }
+.artwork-image-link:hover .image-zoom, .artwork-image-link:focus-visible .image-zoom { background: #fff; }
+.artwork-image-link:focus-visible { outline-offset: -3px; z-index: 1; }
+.lightbox { width: calc(100vw - 32px); max-width: 1400px; height: calc(100dvh - 32px); max-height: calc(100dvh - 32px); margin: auto; padding: 0; border: 0; border-radius: 8px; background: #191714; color: #f7f4ee; overflow: hidden; }
+.lightbox[open] { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
+.lightbox::backdrop { background: rgb(10 9 8 / .9); }
+.lightbox-header { display: flex; justify-content: flex-end; padding: 8px 12px; }
+.lightbox button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 44px; min-width: 44px; padding: 8px 12px; border: 1px solid transparent; border-radius: 4px; background: transparent; color: inherit; cursor: pointer; font-size: .8rem; }
+.lightbox button:hover { background: #35312c; }
+.lightbox button:focus-visible { outline: 2px solid #f7f4ee; outline-offset: -2px; }
+.lightbox-close span { font-size: 1.5rem; line-height: 1; }
+.lightbox-figure { min-height: 0; padding-inline: 12px; }
+.lightbox-figure img { width: 100%; height: 100%; object-fit: contain; }
+.lightbox-footer { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; gap: 12px; align-items: center; padding: 12px; }
+.lightbox-footer p { text-align: center; font-size: .85rem; line-height: 1.5; }
+.lightbox-footer button { font-size: 1.5rem; }
+body.lightbox-open { overflow: hidden; }
 .card-caption { margin-top: 16px; }
 .card-caption h3 { font-size: clamp(1.5rem, 2vw, 1.85rem); }
 .card-caption p { margin-top: 7px; color: var(--muted); font-size: .72rem; }
