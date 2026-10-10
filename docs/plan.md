@@ -58,7 +58,7 @@ Material revisions after release approval require renewed approval. Technical fi
 
 ## Current boundaries
 
-The GitHub repository is `jacobmartinez3d/bethsmosaics`. The first-pass portfolio scope and design are approved and being implemented on a feature branch for local review. The temporary homepage remains the live release until the portfolio implementation receives release approval. The custom domain has not been decided. The deployment workflow publishes `src/` when an approved release reaches `main`.
+The GitHub repository is `jacobmartinez3d/bethsmosaics`. Remote `main` includes the first-pass portfolio through PR #2, merge commit `a55a383` (observed on 2026-10-10). The artist-focused update is approved for implementation on `feat/artist-portfolio-updates`; its implementation review and release approval remain pending. The custom domain has not been decided. The deployment workflow publishes `src/` when an approved release reaches `main`.
 
 Jacob initialized Git, configured `origin`, and renamed the initial branch to `main`. Git writes previously failed inside the sandbox; updated permissions now allow approved Git operations through sandbox escalation. SSH access to GitHub works. GitHub API credentials are unavailable, so repository settings and pull requests are managed by Jacob for now.
 
@@ -97,3 +97,27 @@ Implementation steps and validation are recorded in [the first-pass plan](superp
 - Local preview serves only `src/` at `http://localhost:8000` and has been opened in the browser.
 - The reviewed implementation is committed as `2ccc617` with Jacob Martinez’s required author and committer identity. `feat/portfolio-first-pass` is pushed to GitHub. GitHub API credentials remain unavailable, so a pull request has not been created; its prepared creation link is https://github.com/jacobmartinez3d/bethsmosaics/pull/new/feat/portfolio-first-pass.
 - First-pass production release remains pending explicit approval of the implementation. The live site still serves the previously approved holding page.
+
+## Artist-focused portfolio update approval — 2026-10-10
+
+Jacob explicitly approved the revised scope after relaying Beth’s feedback.
+
+- Keep the existing gallery photographs and title/type captions, Bio, Contact, and the complete My Process section.
+- Remove individual artwork pages as a feature, click-through arrows, enlargement, per-piece metadata/navigation, and all artwork whereabouts. Former piece URLs return to the gallery through relative redirects with a fallback link.
+- Keep Beth’s contact city and future event venues; the location removal concerns where artwork can be found.
+- Add Classes & Shows to navigation and create a static page for Beth-supplied class/show information. Until details arrive, invite visitors to contact Beth without inventing events. Future updates use the existing chat workflow.
+- Use first-person artist prose; change the Contact heading to “I’d Love to Connect” and preserve biography facts. Keep the existing Contact commission wording.
+- Implement on `feat/artist-portfolio-updates` in the existing checkout, based on the first-pass portfolio branch. Keep this specification revision and its implementation together in one pull request.
+- Approval covers specification changes and implementation. Production release still requires local implementation review and explicit release approval.
+
+## Artist-focused update implementation review evidence
+
+- Four content pages: Portfolio, Bio, Classes & Shows, and Contact; nine former artwork URLs are minimal relative redirects to the gallery, including with JavaScript disabled.
+- Removed artwork detail links, arrows, dialogs, navigation, and whereabouts. Gallery photographs display complete pieces. My Process markup is byte-for-byte unchanged from the first-pass implementation.
+- Classes & Shows uses the approved contact invitation until Beth supplies event details. Shared navigation includes the new page.
+- First-person biography preserves its facts; Contact reads “I’d Love to Connect” and retains commission wording and working email/phone links.
+- `python3 tools/check_site.py` passed for all thirteen HTML files, local links/assets/fragments, contact links, and legacy redirects. `git diff --check` passed.
+- All eight real Chrome browser tests passed under `/bethsmosaics/`, including 320/768/1440-pixel layouts, image loading, keyboard focus/mobile navigation, non-interactive gallery, old artwork URLs, Classes & Shows contact navigation, reduced motion, and JavaScript-disabled browsing.
+- Independent read-only code review found no issues. Additional Chrome header checks at 761, 800, 1000, 1001, 1024, 1100, and 1280 pixels found no navigation overlap or overflow. Event listings/booking are deferred until Beth supplies content; existing process image presentation is retained; deployment settings are outside this change.
+- Eight desktop/mobile screenshots of all four content pages are saved under `/tmp/beth-artist-update/` and visually reviewed. The local preview serves only `src/` at `http://localhost:8000`; documentation returns HTTP 404. The preview was opened in the browser.
+- GitHub CLI and an authenticated GitHub API tool are unavailable in this session; the branch can be pushed over SSH and a prepared pull-request creation link supplied. Release remains pending explicit approval of the rendered implementation; no production publishing was requested or triggered.
