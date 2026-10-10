@@ -1,0 +1,66 @@
+name: GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - '.github/workflows/pages.yml'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check site
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.site.outputs.ready }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Check site readiness
+        id: site
+        shell: bash
+        run: |
+          if [ ! -f src/index.html ]; then
+            echo 'ready=false' >> "$GITHUB_OUTPUT"
+            echo 'Site awaits approved homepage implementation; deployment skipped.'
+            exit 0
+          fi
+          if [ ! -s src/index.html ]; then
+            echo 'src/index.html must not be empty.' >&2
+            exit 1
+          fi
+          echo 'ready=true' >> "$GITHUB_OUTPUT"
+
+  deploy:
+    name: Publish site
+    needs: check
+    if: needs.check.outputs.ready == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    concurrency:
+      group: github-pages-production
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload website
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: src
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

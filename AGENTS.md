@@ -1,0 +1,19 @@
+# Website Agent Instructions
+
+Read `docs/plan.md` and `docs/website.md` before changing the website.
+
+- `docs/website.md` is authoritative for site structure, content, and intended behavior. Propose specification changes in chat and wait for explicit approval before updating the specification and implementing them.
+- Put publishable files only in `src/`. Keep documentation, tooling, and workflow files outside it. Use HTML, CSS, JavaScript, and assets that need no build step.
+- Work on a feature branch and keep approved specification changes with their implementation in the same pull request.
+- Make atomic commits: each commit contains one coherent change with its related specification, documentation, and validation. Avoid combining unrelated work.
+- Use Conventional Commits: `<type>(<optional-scope>): <description>`, for example `feat(gallery): add approved mosaic gallery` or `fix(navigation): correct portfolio link`. Use `docs` for documentation-only changes and `chore` for repository setup. Never include credentials in commits.
+- Technical fixes preserving specified behavior need no specification edit. They still need implementation review and release approval.
+- Compare implementation against the specification, check links/assets/interactions and desktop/mobile layouts, and provide a local preview before requesting release approval.
+- Never merge, push directly to `main`, or manually trigger production publishing without explicit chat approval of the reviewed implementation. Request approval again if material changes follow review.
+- After approval, merge the reviewed pull request and check both the Actions result and live site. Report failures accurately.
+- Record newly approved decisions in `docs/plan.md`. Preserve decisions across sessions.
+- Do not invent missing content or publish the specification template. The homepage awaits initial specification approval.
+- Use relative links and asset URLs so the site works under a repository subpath.
+- Follow the same release review process for a revert; do not rewrite shared history.
+
+Local preview: `python3 -m http.server 8000 --directory src`, then open `http://localhost:8000`. Do not serve the repository root.
