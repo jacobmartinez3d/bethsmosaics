@@ -1,6 +1,6 @@
 # Website Specification
 
-Status: awaiting initial content and design approval. This template does not authorize website implementation.
+Status: temporary homepage copy approved; the full portfolio content and design remain to be planned.
 
 This document is the source of truth for the website. Propose changes here for human review before translating them into `src/`. Record approved process decisions in [plan.md](plan.md).
 
@@ -8,15 +8,28 @@ This document is the source of truth for the website. Propose changes here for h
 
 Purpose: a personal/portfolio website for Mom.
 
-Her preferred public name, intended visitors, and what visitors should do still need to be discussed.
+The temporary site uses the public name “Beth’s Mosaics.” Intended visitors and the full portfolio's goals still need to be discussed.
 
 ## Shared site structure
 
-Define approved navigation, header, footer, shared text, visual direction, and accessibility requirements here before implementation.
+The temporary site has a single homepage without navigation, header, footer, images, or interactions. Use a plain, readable, centered heading that wraps on small screens. This holding page does not establish the final site's visual design.
 
 ## Pages
 
-No pages or sections have been approved yet. Use the following format for each proposed page. Replace guidance with approved details rather than publishing it as content.
+### Temporary homepage
+
+- **Page name:** Home.
+- **URL:** `/`, relative to the website root (currently `/bethsmosaics/` on GitHub Pages).
+- **Purpose:** confirm hosting is working while the full website is developed.
+- **Page title:** Beth’s Mosaics.
+- **Description:** Beth’s Mosaics — Coming soon.
+- **Section ID:** holding-message.
+- **Exact visible heading:** Beth’s Mosaics — Coming soon.
+- **Other content, images, links, and interactions:** none.
+
+Jacob selected this exact temporary copy in chat and requested a working hosted site before further development. Future portfolio pages and changes follow the review workflow in `plan.md`.
+
+Use the following format for future proposed pages. Replace guidance with approved details rather than publishing it as content.
 
 ### Page specification format
 
