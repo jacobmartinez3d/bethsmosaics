@@ -13,7 +13,7 @@ Read `docs/plan.md` and `docs/website.md` before changing the website.
 - Never merge, push directly to `main`, or manually trigger production publishing without explicit chat approval of the reviewed implementation. Request approval again if material changes follow review.
 - After approval, merge the reviewed pull request and check both the Actions result and live site. Report failures accurately.
 - Record newly approved decisions in `docs/plan.md`. Preserve decisions across sessions.
-- Do not invent missing content or publish the specification template. The temporary homepage copy is approved; the full portfolio still awaits specification approval.
+- Do not invent missing content or publish the specification template. The first-pass portfolio specification is approved; publication still requires implementation review and explicit release approval.
 - Use relative links and asset URLs so the site works under a repository subpath.
 - Follow the same release review process for a revert; do not rewrite shared history.
 
